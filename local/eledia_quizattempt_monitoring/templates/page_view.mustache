@@ -1,0 +1,207 @@
+
+{{#filterform}}
+
+    <div class="card m-b-1">
+
+        <div class="card-header">
+            Filter Attempts
+        </div>
+
+        <div class="card-body">
+
+            <form action="{{{formurl}}}" target="_self" method="post">
+
+                <input type="hidden" name="sesskey" value="{{{sesskey}}}">
+                <input type="hidden" name="filterform" value="1">
+                <input type="hidden" name="id" value="{{{cmid}}}">
+
+                <div class="form-group row">
+                    <label for="studentnamefilter" class="col-sm-2 col-form-label">{{#str}}template_page_view_filterform_label_studentnamefilter, local_eledia_quizattempt_monitoring{{/str}}</label>
+                    <div class="col-sm-10">
+                        <input
+                                id="studentnamefilter"
+                                type="text"
+                                name="studentnamefilter"
+                                value="{{{studentnamefilter}}}"
+                                class="form-control"
+                                placeholder="{{#str}}template_page_view_filterform_placeholder_studentnamefilter, local_eledia_quizattempt_monitoring{{/str}}"
+                        >
+                    </div>
+                </div>
+
+                <fieldset class="form-group">
+                    <div class="row">
+                        <legend class="col-form-label col-sm-2 pt-0">{{#str}}template_page_view_filterform_label_stateoption, local_eledia_quizattempt_monitoring{{/str}}</legend>
+                        <div class="col-sm-10">
+                            {{#stateoptions}}
+                               <div class="form-check">
+                                   <input class="form-check-input" type="checkbox" id="stateoption{{{identifier}}}" {{#active}}checked{{/active}} name="stateoption[]" value="{{{identifier}}}">
+                                   <label class="form-check-label" for="stateoption{{{identifier}}}">{{{name}}}</label>
+                               </div>
+                            {{/stateoptions}}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="form-group col-sm-10 offset-sm-2 p-l-0">
+                    <button class="btn btn-primary" type="submit" name="submitfilter" value="1">{{#str}}template_page_view_filterform_label_submitfilter, local_eledia_quizattempt_monitoring{{/str}}</button>
+                    <button class="btn btn-secondary" type="submit" name="resetfilter" value="1">{{#str}}template_page_view_filterform_label_resetfilter, local_eledia_quizattempt_monitoring{{/str}}</button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+{{/filterform}}
+
+{{#hasattempts}}
+
+    <form action="{{{overrideformurl}}}" target="_self" method="post">
+
+        <input type="hidden" name="sesskey" value="{{{sesskey}}}">
+        <input type="hidden" name="overrideform" value="1">
+        <input type="hidden" name="id" value="{{{cmid}}}">
+
+        <table class="table table-bordered table-hover">
+
+            <thead class="thead-light">
+                <th>
+                    <input type="checkbox" id="checkboxcontrol">
+                </th>
+                <th>
+                    {{#str}}template_page_view_header_studentname, local_eledia_quizattempt_monitoring{{/str}}
+                </th>
+                <th>
+                    {{#str}}template_page_view_header_state, local_eledia_quizattempt_monitoring{{/str}}
+                </th>
+                <th>
+                    {{#str}}template_page_view_header_progress, local_eledia_quizattempt_monitoring{{/str}}
+                </th>
+                <th>
+                    {{#str}}template_page_view_header_timedue, local_eledia_quizattempt_monitoring{{/str}}
+                </th>
+                <th>
+                    {{#str}}template_page_view_header_overrides, local_eledia_quizattempt_monitoring{{/str}}
+                </th>
+            </thead>
+
+            <tbody>
+
+                {{#attempts}}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="attemptoverride[]" value="{{{attemptid}}}">
+                        </td>
+                        <td>
+                            <a href="{{{studenturl}}}">{{{studentname}}}</a>
+                        </td>
+                        <td>
+                            {{{state}}}
+                        </td>
+                        <td>
+                            {{{progress}}}
+                            <a href="{{{attemptdetailurl}}}">{{#str}}template_page_view_viewattemptlink, local_eledia_quizattempt_monitoring{{/str}}</a>
+                        </td>
+                        <td>
+                            {{{timedue}}}
+                        </td>
+                        <td>
+                            <div class="container-fluid">
+                                <div class="row m-b-1">
+                                    <a class="btn btn-primary btn-sm" href="{{{createoverrideurl}}}">{{#str}}template_page_view_override_createlink, local_eledia_quizattempt_monitoring{{/str}}</a>
+                                    {{#deleteoverrideurl}}
+                                        <a class="btn btn-primary btn-sm m-l-1" href="{{{deleteoverrideurl}}}">{{#str}}template_page_view_override_deletelink, local_eledia_quizattempt_monitoring{{/str}}</a>
+                                    {{/deleteoverrideurl}}
+                                </div>
+                                <div class="row">
+                                    {{#hasoverrides}}
+                                        <ul>
+                                            {{#overrides}}
+                                                <li>{{{.}}}</li>
+                                            {{/overrides}}
+                                        </ul>
+                                    {{/hasoverrides}}
+                                    {{^hasoverrides}}
+                                        {{#str}}template_page_view_override_nooverrides, local_eledia_quizattempt_monitoring{{/str}}
+                                    {{/hasoverrides}}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {{/attempts}}
+
+            </tbody>
+
+        </table>
+
+        <div>
+            <button class="btn btn-primary" type="submit" name="addoverride" value="1">{{#str}}template_page_view_label_addoverride, local_eledia_quizattempt_monitoring{{/str}}</button>
+            <button class="btn btn-primary" type="submit" name="deleteoverride" value="1">{{#str}}template_page_view_label_deleteoverride, local_eledia_quizattempt_monitoring{{/str}}</button>
+        </div>
+
+    </form>
+
+{{/hasattempts}}
+
+{{^hasattempts}}
+    <div class="card">
+        <div class="card-body font-weight-bold">
+            {{#str}}template_page_view_noattempts, local_eledia_quizattempt_monitoring{{/str}}
+        </div>
+    </div>
+{{/hasattempts}}
+
+{{#js}}
+    require(['jquery', 'core/log'], function($, log) {
+        $(document).ready(function() {
+
+            var generalbox = $('thead input[type=checkbox]'),
+                rowboxes = $('tbody input[type=checkbox]'),
+                rowcells = $('tbody tr td');
+
+            // Add highlighting on reload.
+            rowboxes.each(function() {
+                if(this.checked) {
+                    $(this).parents('tr').addClass('table-secondary');
+                }
+            });
+
+            // Switch states of row boxes according to state of general box.
+            generalbox.on('change', function() {
+                var generalboxchecked = generalbox.prop('checked');
+                rowboxes.each(function() {
+                    if (generalboxchecked && !this.checked) {
+                        $(this).click();
+                    } else if (!generalboxchecked && this.checked) {
+                        $(this).click();
+                    }
+                });
+            });
+
+            // Highlight rows of checked boxes.
+            rowboxes.on('change', function() {
+                if (this.checked) {
+                    $(this).parents('tr').addClass('table-secondary');
+                } else {
+                    $(this).parents('tr').removeClass('table-secondary');
+                }
+            });
+
+            // Prevent loop of death...
+            rowboxes.on('click', function(event) {
+                event.stopPropagation();
+            });
+
+            // Toggle checkboxes when clicking inside row.
+            rowcells.on('click', function() {
+                $(this).parents('tr').find('input[type=checkbox]').click();
+            });
+
+            // Prevent toggling checkboxes when clicking links.
+            rowcells.find('a').on('click', function(event) {
+                event.stopPropagation();
+            });
+        });
+    });
+{{/js}}

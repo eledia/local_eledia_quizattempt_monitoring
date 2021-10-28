@@ -1,0 +1,8 @@
+#page-local-eledia_quizattempt_monitoring-view table th:first-child,
+#page-local-eledia_quizattempt_monitoring-view table td:first-child {
+    width: 20px;
+}
+
+#page-local-eledia_quizattempt_monitoring-view table td:hover {
+    cursor: pointer;
+}
