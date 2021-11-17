@@ -104,7 +104,26 @@
                             <a href="{{{attemptdetailurl}}}">{{#str}}template_page_view_viewattemptlink, local_eledia_quizattempt_monitoring{{/str}}</a>
                         </td>
                         <td>
-                            {{{timedue}}}
+                            <div>
+                                {{#str}}template_page_view_attemptstarted, local_eledia_quizattempt_monitoring{{/str}}:
+                                {{#userdate}}{{timestarted}}, {{#str}} strftimedatetime, core_langconfig {{/str}}{{/userdate}}
+                            </div>
+                            {{#timefinished}}
+                                <div>
+                                    {{#str}}template_page_view_attemptfinished, local_eledia_quizattempt_monitoring{{/str}}:
+                                    {{#userdate}}{{timefinished}}, {{#str}} strftimedatetime, core_langconfig {{/str}}{{/userdate}}
+                                </div>
+                            {{/timefinished}}
+                            {{^timefinished}}
+                                <div class="m-t-1">
+                                    {{{timedue}}}
+                                </div>
+                                {{#timeleft}}
+                                    <div>
+                                        {{#str}}timeleft, quiz{{/str}}: <span class="timeleft_timer font-weight-bold" data-timeleft="{{.}}">--:--:--</span>
+                                    </div>
+                                {{/timeleft}}
+                            {{/timefinished}}
                         </td>
                         <td>
                             <div class="container-fluid">
@@ -153,8 +172,10 @@
 {{/hasattempts}}
 
 {{#js}}
-    require(['jquery', 'core/log'], function($, log) {
+    require(['jquery', 'core/log', 'core/str'], function($, log, getstr) {
         $(document).ready(function() {
+
+            var overduestr = getstr.get_string('overdue', 'quiz').then(function(string) {overduestr = string;}).fail(function() {overduestr = 'overdue';});
 
             var generalbox = $('thead input[type=checkbox]'),
                 rowboxes = $('tbody input[type=checkbox]'),
@@ -202,6 +223,44 @@
             rowcells.find('a').on('click', function(event) {
                 event.stopPropagation();
             });
+
+            $('span.timeleft_timer').each(function(){
+                var element = $(this);
+                updateTimeleftTimer(element);
+                setInterval(function() {
+                    updateTimeleftTimer(element);
+                },
+                1000);
+            });
+            function updateTimeleftTimer(element) {
+                var timeleft = element.attr('data-timeleft'),
+                    content = overduestr;
+
+                if (timeleft > 0) {
+
+                    var minutes_temp = Math.floor(timeleft / 60),
+                        hours = Math.floor(minutes_temp / 60),
+                        minutes = minutes_temp % 60,
+                        seconds = timeleft % 60;
+
+                    if(('' + hours).length < 2) {
+                        hours = '0' + hours;
+                    }
+
+                    if(('' + minutes).length < 2) {
+                        minutes = '0' + minutes;
+                    }
+
+                    if(('' + seconds).length < 2) {
+                        seconds = '0' + seconds;
+                    }
+
+                    content = hours + ':' + minutes + ':' + seconds;
+                    element.attr('data-timeleft', timeleft - 1);
+                }
+
+                element.text(content);
+            }
         });
     });
 {{/js}}

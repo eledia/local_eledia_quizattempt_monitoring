@@ -137,16 +137,20 @@ class renderer extends \plugin_renderer_base {
             $questionstodo = 0;
             foreach ($questionslots as $slot) {
                 $questionattempt = $attemptobj->get_question_attempt($slot);
-                $numsteps = $questionattempt->get_num_steps();
-                if ($numsteps < 2) {
-                    $questionstodo++;
-                } else {
-                    $step = $questionattempt->get_step(1);
-                    if ($step->get_state() instanceof \question_state_complete) {
-                        $questionscompleted++;
-                    } else {
+                switch ($questionattempt->get_state_class(false)) {
+                    case 'notyetanswered':
+                    case 'notanswered':
+                        $questionstodo++;
+                        break;
+
+                    case 'invalidanswer':
                         $questionsincomplete++;
-                    }
+                        break;
+
+                    case 'answersaved':
+                    case 'complete':
+                        $questionscompleted++;
+                        break;
                 }
             }
 
@@ -164,10 +168,14 @@ class renderer extends \plugin_renderer_base {
             $accessmngr = $attemptobj->get_access_manager($currenttime);
             $timeduets = $accessmngr->get_end_time($attemptrec);
             $timeleft = $accessmngr->get_time_left_display($attemptrec, $currenttime);
+            if ($timeleft < 0 || $attemptobj->is_finished()) {
+                $timeleft = false;
+            }
 
             $timeduestr = get_string('renderer_render_attempt_list_attempttimedue_nolimit', 'local_eledia_quizattempt_monitoring');
             if (false !== $timeduets) {
-                $timeendstr = date('d.m.Y - H:i:s', $timeduets);
+                $timeendstr = userdate($timeduets);
+                //$timeendstr = date('d.m.Y - H:i:s', $timeduets);
                 $timeduestr = get_string('renderer_render_attempt_list_attempttimedue', 'local_eledia_quizattempt_monitoring', $timeendstr);
             }
 
@@ -245,7 +253,10 @@ class renderer extends \plugin_renderer_base {
                 'studenturl' => $userurl,
                 'state' => $attemptstate,
                 'progress' => $progressstr,
+                'timestarted' => $attemptrec->timestart,
+                'timefinished' => $attemptrec->timefinish,
                 'timedue' => $timeduestr,
+                'timeleft' => $timeleft,
                 'attemptid' => $attemptid,
                 'attemptdetailurl' => new \moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid]),
                 'hasoverrides' => count($overridestrs) > 0,

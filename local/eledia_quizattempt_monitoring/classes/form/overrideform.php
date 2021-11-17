@@ -86,7 +86,7 @@ class overrideform extends \moodleform {
             get_string('quizclose', 'quiz'),
             \mod_quiz_mod_form::$datefieldoptions
         );
-        $mform->setDefault('timeend', $quiz->timeopen);
+        $mform->setDefault('timeend', $quiz->timeclose);
 
 
         // Add duration input field.
@@ -98,6 +98,22 @@ class overrideform extends \moodleform {
         );
         $mform->addHelpButton('timelimit', 'timelimit', 'quiz');
         $mform->setDefault('timelimit', $quiz->timelimit);
+
+
+        // Number of attempts.
+        $attemptoptions = array('0' => get_string('unlimited'));
+        for ($i = 1; $i <= QUIZ_MAX_ATTEMPT_OPTION; $i++) {
+            $attemptoptions[$i] = $i;
+        }
+        $mform->addElement(
+            'select',
+            'attempts',
+            get_string('attemptsallowed', 'quiz'),
+            $attemptoptions,
+            ['optional' => true]
+        );
+        $mform->addHelpButton('attempts', 'attempts', 'quiz');
+        $mform->setDefault('attempts', $quiz->attempts);
 
         $this->add_action_buttons();
     }

@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') or die;
 
 
-$plugin->version = 2021102800;
+$plugin->version = 2021111700;
 $plugin->requires = 2020061500;
 $plugin->component = 'local_eledia_quizattempt_monitoring';
 $plugin->dependencies = array(

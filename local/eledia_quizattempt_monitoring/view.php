@@ -143,6 +143,9 @@ if ($overrideform && $hasoverridecap) {
                 if (!empty($formdata->timelimit)) {
                     $override->timelimit = $formdata->timelimit;
                 }
+                if (isset($formdata->attempts)) {
+                    $override->attempts = $formdata->attempts;
+                }
 
                 // Update record.
                 $DB->update_record('quiz_overrides', $override);
@@ -163,6 +166,9 @@ if ($overrideform && $hasoverridecap) {
                 }
                 if (!empty($formdata->timelimit)) {
                     $override->timelimit = $formdata->timelimit;
+                }
+                if (isset($formdata->attempts)) {
+                    $override->attempts = $formdata->attempts;
                 }
 
                 // Insert record.
