@@ -1,8 +1,45 @@
-#page-local-eledia_quizattempt_monitoring-view table th:first-child,
-#page-local-eledia_quizattempt_monitoring-view table td:first-child {
+#page-local-eledia_quizattempt_monitoring-view table.attemptlist th:first-child,
+#page-local-eledia_quizattempt_monitoring-view table.attemptlist td:first-child {
     width: 20px;
 }
 
-#page-local-eledia_quizattempt_monitoring-view table td:hover {
+#page-local-eledia_quizattempt_monitoring-view table.attemptlist td:hover {
     cursor: pointer;
+}
+
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo .gradetotal {
+    margin-bottom: 2px;
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 100%;
+}
+
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td {
+    border: none;
+    padding: 0 7px;
+}
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td .icon {
+    margin-right: 0.1rem;
+}
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td .icon.qstate.qtodo {
+    color: red;
+}
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td .icon.qstate.qinvalid {
+    color: yellow;
+}
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td .icon.qstate.qcomplete {
+    color: green;
+}
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td {
+    border-left: 1px solid #000;
+}
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td:first-child {
+    width: auto;
+    border-left: none;
+    padding-left: 0;
+}
+
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo table td:hover {
+    cursor: initial;
+    background-color: initial;
 }

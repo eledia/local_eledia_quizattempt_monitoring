@@ -34,7 +34,7 @@ require_once $CFG->dirroot . '/mod/quiz/locallib.php';
 class renderer extends \plugin_renderer_base {
 
     public function render_attempt_list($cm, $instance, $baseurl) {
-        global $DB;
+        global $DB, $OUTPUT;
 
         // Get filter settings from cache.
         $filtersettings = \cache::make('local_eledia_quizattempt_monitoring', 'filtersettings');
@@ -126,17 +126,43 @@ class renderer extends \plugin_renderer_base {
             $userstr = fullname($userrec) . ' (' . $userrec->username . ', ' . $userrec->idnumber . ')';
             $userurl = new \moodle_url('/user/view.php', ['id' => $userrec->id, 'course' => $instance->course]);
 
-            // Prepare attempt state.
+            // Prepare attempt data.
             $attemptstate = \quiz_attempt_state_name($attemptrec->state);
-
-            // Prepare attempt progress.
             $attemptobj = \quiz_attempt::create($attemptid);
+
+            // Prepare grading information.
+            $quiz = $attemptobj->get_quiz();
+            $marksachieved = $attemptobj->get_sum_marks();
+            $grademultiplier = $quiz->grade / $quiz->sumgrades;
+            $gradingdata = new \stdClass;
+            $gradingdata->maxmarks = round($quiz->grade, 2);
+            $gradingdata->marks = round($marksachieved * $grademultiplier, 2);
+            $gradingdata->markspercent = round($gradingdata->marks / $gradingdata->maxmarks * 100, 0);
+            $gradingdata->attemptgradestring = get_string(
+                'renderer_render_attempt_list_attemptgrade',
+                'local_eledia_quizattempt_monitoring',
+                [
+                    'max' => $gradingdata->maxmarks,
+                    'achieved' => $gradingdata->marks,
+                    'percent' => $gradingdata->markspercent,
+                    'reviewurl' => new \moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid])
+                ]
+            );
+
+            // Prepare question state & grade info.
+            $gradingdata->questions = [];
             $questionslots = $attemptobj->get_slots();
             $questionscompleted = 0;
             $questionsincomplete = 0;
             $questionstodo = 0;
             foreach ($questionslots as $slot) {
                 $questionattempt = $attemptobj->get_question_attempt($slot);
+
+                // Default question state.
+                $qstate = 'qtodo';
+                $qstatestr = get_string('renderer_render_attempt_list_qstate_todo', 'local_eledia_quizattempt_monitoring');
+
+                // What state are we actually in?
                 switch ($questionattempt->get_state_class(false)) {
                     case 'notyetanswered':
                     case 'notanswered':
@@ -145,15 +171,74 @@ class renderer extends \plugin_renderer_base {
 
                     case 'invalidanswer':
                         $questionsincomplete++;
+                        $qstate = 'qinvalid';
+                        $qstatestr = get_string('renderer_render_attempt_list_qstate_invalid', 'local_eledia_quizattempt_monitoring');
                         break;
 
                     case 'answersaved':
                     case 'complete':
                         $questionscompleted++;
+                        $qstate = 'qcomplete';
+                        $qstatestr = get_string('renderer_render_attempt_list_qstate_complete', 'local_eledia_quizattempt_monitoring');
                         break;
                 }
+
+                // Get question grade info.
+                $qmaxmark = $questionattempt->get_max_mark();
+                $qmark = $questionattempt->get_mark();
+                if (empty($qmark)) {
+                    $qmark = 0;
+                }
+
+
+                // Collect question data.
+                $questiondata = new \stdClass;
+                $questiondata->questionstring = get_string('renderer_render_attempt_list_questionnumber', 'local_eledia_quizattempt_monitoring', $slot);
+                $questiondata->markstring = get_string('renderer_render_attempt_list_questionmarks', 'local_eledia_quizattempt_monitoring', ['max' => $qmaxmark, 'achieved' => $qmark]);
+
+                // Link to question in review UI.
+                $questionelementid = $questionattempt->get_outer_question_div_unique_id();
+                $questiondata->reviewurl = new \moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid], $questionelementid);
+
+                // Create the icons in the order we want them.
+                $questiondata->icons = [];
+
+                // Is it answered yet?
+                $questiondata->icons[] = $OUTPUT->pix_icon($qstate, $qstatestr, 'local_eledia_quizattempt_monitoring', ['class' => 'qstate ' . $qstate]);
+
+                // Does it require manual grading?
+                $alttext = get_string('renderer_render_attempt_list_questiondoesntrequiremanualgrading', 'local_eledia_quizattempt_monitoring');
+                $classes = 'text-muted';
+                if ($questionattempt->get_question()->qtype->is_manual_graded()) {
+                    $alttext = get_string('renderer_render_attempt_list_questionrequiresmanualgrading', 'local_eledia_quizattempt_monitoring');
+                    $classes = '';
+                }
+                $questiondata->icons[] = $OUTPUT->pix_icon('requiresmanualgrading', $alttext, 'local_eledia_quizattempt_monitoring', ['class' => $classes]);
+
+                // Has it been graded yet? If so, how?
+                $hascomment = $questionattempt->has_manual_comment();
+                $hasmark = $questionattempt->get_mark() !== null ? true : false;
+                if (!$hasmark) {
+                    $alttext = get_string('renderer_render_attempt_list_questionnotgraded', 'local_eledia_quizattempt_monitoring');
+                    $questiondata->icons[] = $OUTPUT->pix_icon('nogradeyet', $alttext, 'local_eledia_quizattempt_monitoring');
+                } else {
+                    if ($hascomment) {
+                        $alttext = get_string('renderer_render_attempt_list_questiongradedmanually', 'local_eledia_quizattempt_monitoring');
+                        $questiondata->icons[] = $OUTPUT->pix_icon('gradedmanually', $alttext, 'local_eledia_quizattempt_monitoring');
+                    } else {
+                        $alttext = get_string('renderer_render_attempt_list_questiongradedautomatically', 'local_eledia_quizattempt_monitoring');
+                        $questiondata->icons[] = $OUTPUT->pix_icon('gradedautomatically', $alttext, 'local_eledia_quizattempt_monitoring');
+                    }
+                }
+
+                // Store the grade relevant data.
+                $gradingdata->questions[] = $questiondata;
             }
 
+            // Render grade string HTML.
+            $gradestring = $this->render_from_template('local_eledia_quizattempt_monitoring/comp_attemptgradinginfo', $gradingdata);
+
+            // Render progress string.
             $strparams = [
                 'questioncount' => count($questionslots),
                 'answered' => $questionsincomplete + $questionscompleted,
@@ -162,6 +247,7 @@ class renderer extends \plugin_renderer_base {
                 'todo' => $questionstodo
             ];
             $progressstr = get_string('renderer_render_attempt_list_attemptprogressdescription', 'local_eledia_quizattempt_monitoring', $strparams);
+
 
             // Prepare time due display.
             $currenttime = time();
@@ -253,6 +339,7 @@ class renderer extends \plugin_renderer_base {
                 'studenturl' => $userurl,
                 'state' => $attemptstate,
                 'progress' => $progressstr,
+                'grading' => $gradestring,
                 'timestarted' => $attemptrec->timestart,
                 'timefinished' => $attemptrec->timefinish,
                 'timedue' => $timeduestr,

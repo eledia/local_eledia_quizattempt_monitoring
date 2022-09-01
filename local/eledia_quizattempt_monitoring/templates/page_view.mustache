@@ -63,7 +63,7 @@
         <input type="hidden" name="overrideform" value="1">
         <input type="hidden" name="id" value="{{{cmid}}}">
 
-        <table class="table table-bordered table-hover">
+        <table class="attemptlist table table-bordered table-hover">
 
             <thead class="thead-light">
                 <th>
@@ -77,6 +77,9 @@
                 </th>
                 <th>
                     {{#str}}template_page_view_header_progress, local_eledia_quizattempt_monitoring{{/str}}
+                </th>
+                <th>
+                    {{#str}}template_page_view_header_grading, local_eledia_quizattempt_monitoring{{/str}}
                 </th>
                 <th>
                     {{#str}}template_page_view_header_timedue, local_eledia_quizattempt_monitoring{{/str}}
@@ -102,6 +105,9 @@
                         <td>
                             {{{progress}}}
                             <a href="{{{attemptdetailurl}}}">{{#str}}template_page_view_viewattemptlink, local_eledia_quizattempt_monitoring{{/str}}</a>
+                        </td>
+                        <td>
+                            {{{grading}}}
                         </td>
                         <td>
                             <div>

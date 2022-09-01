@@ -1,0 +1,16 @@
+<div class="attemptgradinginfo">
+    <p class="gradetotal">{{{attemptgradestring}}}</p>
+    <table>
+        {{#questions}}
+            <tr>
+                <td><a href="{{{reviewurl}}}">{{{questionstring}}}</a></td>
+                <td>{{{markstring}}}</td>
+                <td>
+                    {{#icons}}
+                        {{{.}}}
+                    {{/icons}}
+                </td>
+            </tr>
+        {{/questions}}
+    </table>
+</div>

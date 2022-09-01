@@ -63,3 +63,15 @@ function local_eledia_quizattempt_monitoring_extend_settings_navigation(\setting
     }
     $settingnode->add_node($foonode);
 }
+
+function local_eledia_quizattempt_monitoring_get_fontawesome_icon_map() {
+    return [
+        'local_eledia_quizattempt_monitoring:qtodo' => 'fa-file-text',
+        'local_eledia_quizattempt_monitoring:qinvalid' => 'fa-file-text',
+        'local_eledia_quizattempt_monitoring:qcomplete' => 'fa-file-text',
+        'local_eledia_quizattempt_monitoring:requiresmanualgrading' => 'fa-pencil-square-o',
+        'local_eledia_quizattempt_monitoring:gradedmanually' => 'fa-pencil',
+        'local_eledia_quizattempt_monitoring:gradedautomatically' => 'fa-cogs',
+        'local_eledia_quizattempt_monitoring:nogradeyet' => 'fa-question-circle',
+    ];
+}
