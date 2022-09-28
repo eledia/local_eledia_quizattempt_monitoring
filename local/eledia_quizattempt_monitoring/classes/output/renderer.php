@@ -135,6 +135,7 @@ class renderer extends \plugin_renderer_base {
             $marksachieved = $attemptobj->get_sum_marks();
             $grademultiplier = $quiz->grade / $quiz->sumgrades;
             $gradingdata = new \stdClass;
+            $gradingdata->attemptid = $attemptid;
             $gradingdata->maxmarks = round($quiz->grade, 2);
             $gradingdata->marks = round($marksachieved * $grademultiplier, 2);
             $gradingdata->markspercent = round($gradingdata->marks / $gradingdata->maxmarks * 100, 0);
@@ -145,7 +146,7 @@ class renderer extends \plugin_renderer_base {
                     'max' => $gradingdata->maxmarks,
                     'achieved' => $gradingdata->marks,
                     'percent' => $gradingdata->markspercent,
-                    'reviewurl' => new \moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid])
+                    'reviewurl' => (new \moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid]))->out()
                 ]
             );
 

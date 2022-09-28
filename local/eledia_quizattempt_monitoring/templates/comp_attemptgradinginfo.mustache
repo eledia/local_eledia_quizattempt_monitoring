@@ -1,16 +1,33 @@
 <div class="attemptgradinginfo">
     <p class="gradetotal">{{{attemptgradestring}}}</p>
-    <table>
-        {{#questions}}
-            <tr>
-                <td><a href="{{{reviewurl}}}">{{{questionstring}}}</a></td>
-                <td>{{{markstring}}}</td>
-                <td>
-                    {{#icons}}
-                        {{{.}}}
-                    {{/icons}}
-                </td>
-            </tr>
-        {{/questions}}
-    </table>
+    <div id="tabledrawer-{{{attemptid}}}" class="tabledrawercontainer">
+        <div class="tabledrawercontent displayinitial">
+            <table>
+                {{#questions}}
+                    <tr>
+                        <td><a href="{{{reviewurl}}}">{{{questionstring}}}</a></td>
+                        <td>{{{markstring}}}</td>
+                        <td>
+                            {{#icons}}
+                                {{{.}}}
+                            {{/icons}}
+                        </td>
+                    </tr>
+                {{/questions}}
+            </table>
+            <div class="bottomgradient">&nbsp;</div>
+        </div>
+        <div class="tabledrawercontrols">
+            <a href="#" id="showmore-{{{attemptid}}}" class="showmoreattempt d-inline-block">
+                <i class="fa fa-chevron-right"></i>
+                &nbsp;
+                {{#str}}template_comp_attemptgradinginfo_label_showmoreattempt, local_eledia_quizattempt_monitoring{{/str}}
+            </a>
+            <a href="#" id="showless-{{{attemptid}}}" class="showlessattempt d-none">
+                <i class="fa fa-chevron-down"></i>
+                &nbsp;
+                {{#str}}template_comp_attemptgradinginfo_label_showlessattempt, local_eledia_quizattempt_monitoring{{/str}}
+            </a>
+        </div>
+    </div>
 </div>

@@ -4,7 +4,7 @@
     <div class="card m-b-1">
 
         <div class="card-header">
-            Filter Attempts
+            {{#str}}template_page_view_filterform_title, local_eledia_quizattempt_monitoring{{/str}}
         </div>
 
         <div class="card-body">
@@ -80,6 +80,11 @@
                 </th>
                 <th>
                     {{#str}}template_page_view_header_grading, local_eledia_quizattempt_monitoring{{/str}}
+                    &nbsp;
+                    (
+                        <a id="showallgradeinfo" class="d-inline-block" href="#"><i class="fa fa-chevron-right"></i>&nbsp;{{#str}}template_page_view_header_grading_showallgradeinfo, local_eledia_quizattempt_monitoring{{/str}}</a>
+                        <a id="hideallgradeinfo" class="d-none" href="#"><i class="fa fa-chevron-down"></i>&nbsp;{{#str}}template_page_view_header_grading_hideallgradeinfo, local_eledia_quizattempt_monitoring{{/str}}</a>
+                    )
                 </th>
                 <th>
                     {{#str}}template_page_view_header_timedue, local_eledia_quizattempt_monitoring{{/str}}
@@ -176,97 +181,3 @@
         </div>
     </div>
 {{/hasattempts}}
-
-{{#js}}
-    require(['jquery', 'core/log', 'core/str'], function($, log, getstr) {
-        $(document).ready(function() {
-
-            var overduestr = getstr.get_string('overdue', 'quiz').then(function(string) {overduestr = string;}).fail(function() {overduestr = 'overdue';});
-
-            var generalbox = $('thead input[type=checkbox]'),
-                rowboxes = $('tbody input[type=checkbox]'),
-                rowcells = $('tbody tr td');
-
-            // Add highlighting on reload.
-            rowboxes.each(function() {
-                if(this.checked) {
-                    $(this).parents('tr').addClass('table-secondary');
-                }
-            });
-
-            // Switch states of row boxes according to state of general box.
-            generalbox.on('change', function() {
-                var generalboxchecked = generalbox.prop('checked');
-                rowboxes.each(function() {
-                    if (generalboxchecked && !this.checked) {
-                        $(this).click();
-                    } else if (!generalboxchecked && this.checked) {
-                        $(this).click();
-                    }
-                });
-            });
-
-            // Highlight rows of checked boxes.
-            rowboxes.on('change', function() {
-                if (this.checked) {
-                    $(this).parents('tr').addClass('table-secondary');
-                } else {
-                    $(this).parents('tr').removeClass('table-secondary');
-                }
-            });
-
-            // Prevent loop of death...
-            rowboxes.on('click', function(event) {
-                event.stopPropagation();
-            });
-
-            // Toggle checkboxes when clicking inside row.
-            rowcells.on('click', function() {
-                $(this).parents('tr').find('input[type=checkbox]').click();
-            });
-
-            // Prevent toggling checkboxes when clicking links.
-            rowcells.find('a').on('click', function(event) {
-                event.stopPropagation();
-            });
-
-            $('span.timeleft_timer').each(function(){
-                var element = $(this);
-                updateTimeleftTimer(element);
-                setInterval(function() {
-                    updateTimeleftTimer(element);
-                },
-                1000);
-            });
-            function updateTimeleftTimer(element) {
-                var timeleft = element.attr('data-timeleft'),
-                    content = overduestr;
-
-                if (timeleft > 0) {
-
-                    var minutes_temp = Math.floor(timeleft / 60),
-                        hours = Math.floor(minutes_temp / 60),
-                        minutes = minutes_temp % 60,
-                        seconds = timeleft % 60;
-
-                    if(('' + hours).length < 2) {
-                        hours = '0' + hours;
-                    }
-
-                    if(('' + minutes).length < 2) {
-                        minutes = '0' + minutes;
-                    }
-
-                    if(('' + seconds).length < 2) {
-                        seconds = '0' + seconds;
-                    }
-
-                    content = hours + ':' + minutes + ':' + seconds;
-                    element.attr('data-timeleft', timeleft - 1);
-                }
-
-                element.text(content);
-            }
-        });
-    });
-{{/js}}

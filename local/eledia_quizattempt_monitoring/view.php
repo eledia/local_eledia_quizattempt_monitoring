@@ -260,6 +260,7 @@ if ($overrideform && $hasoverridecap) {
 
     // Render attempt list.
     $output = $renderer->render_attempt_list($cm, $instance, $baseurl);
+    $PAGE->requires->js_call_amd('local_eledia_quizattempt_monitoring/attemptlist', 'init');
 }
 
 // Start output.

@@ -43,3 +43,56 @@
     cursor: initial;
     background-color: initial;
 }
+
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo .tabledrawercontent {
+    position: relative;
+}
+
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo .tabledrawercontent.displayinitial {
+    max-height: 100px;
+    overflow: hidden;
+}
+
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo .tabledrawercontent .bottomgradient {
+    display: none;
+}
+
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo .tabledrawercontent.displayinitial .bottomgradient {
+    display: block;
+    z-index: 100;
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+}
+
+#page-local-eledia_quizattempt_monitoring-view tr.table-secondary .attemptgradinginfo .tabledrawercontent.displayinitial .bottomgradient {
+    background: linear-gradient(rgba(241,243,245,0), rgba(241,243,245,1));
+}
+
+#page-local-eledia_quizattempt_monitoring-view tr:hover .attemptgradinginfo .tabledrawercontent.displayinitial .bottomgradient {
+    background: linear-gradient(rgba(236,236,236,0), rgba(236,236,236,1));
+}
+
+#page-local-eledia_quizattempt_monitoring-view tr.table-secondary:hover .attemptgradinginfo .tabledrawercontent.displayinitial .bottomgradient {
+    background: linear-gradient(rgba(227, 230, 234, 0), rgba(227, 230, 234, 1));
+}
+#page-local-eledia_quizattempt_monitoring-view .attemptgradinginfo .tabledrawercontrols {
+    border-top: 1px solid #000000;
+    padding-top: 7px;
+}
+
+#page-local-eledia_quizattempt_monitoring-view a#showallgradeinfo,
+#page-local-eledia_quizattempt_monitoring-view a#hideallgradeinfo,
+#page-local-eledia_quizattempt_monitoring-view a.showmoreattempt,
+#page-local-eledia_quizattempt_monitoring-view a.showlessattempt {
+    color: #0a477e;
+}
+
+#page-local-eledia_quizattempt_monitoring-view a.showmoreattempt,
+#page-local-eledia_quizattempt_monitoring-view a.showlessattempt {
+    display: inline-block;
+    margin-left: 5px;
+}
