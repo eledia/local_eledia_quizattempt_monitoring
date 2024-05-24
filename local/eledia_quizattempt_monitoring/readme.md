@@ -30,3 +30,7 @@ The plugin defines two capabilities:
 * local/eledia_quizattempt_monitoring:view (Required to display the monitoring page)
 * local/eledia_quizattempt_monitoring:override (Required to add/update/delete overrides)
 
+
+## Funding
+
+This plugin was developed by eLeDia GmbH on behalf of Hochschule Darmstadt (https://h-da.de/)
